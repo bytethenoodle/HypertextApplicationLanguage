@@ -61,17 +61,20 @@ public class NamespaceManager {
   public func curie(href: String) -> String? {
     for (name, ref) in refForName {
       guard let range = ref.range(of: NamespaceManager.Rel) else { continue }
-      let left = ref.substring(to: range.lowerBound)
-      let right = ref.substring(from: range.upperBound)
+      let left = String(ref[...range.lowerBound])
+      let right = String(ref[range.upperBound...])
       let leftDistance = ref.distance(from: ref.startIndex, to: range.lowerBound)
       let rightDistance = ref.distance(from: range.upperBound, to: ref.endIndex)
       let startIndex = href.index(href.startIndex, offsetBy: leftDistance)
       let endIndex = href.index(href.endIndex, offsetBy: -rightDistance)
       guard startIndex <= endIndex else { continue }
-      if href.substring(to: startIndex) == left && href.substring(from: endIndex) == right {
-        return name + ":" + href.substring(with: startIndex..<endIndex)
+      if String(href[...startIndex]) == left && String(href[endIndex...]) == right {
+        return name + ":" + href[startIndex..<endIndex]
       }
     }
+    
+    
+    
     return nil
   }
 
@@ -85,10 +88,10 @@ public class NamespaceManager {
   /// works.
   public func href(curie: String) -> String? {
     guard let range = curie.range(of: ":") else { return nil }
-    let name = curie.substring(to: range.lowerBound)
+    let name = String(curie[...range.lowerBound])
     guard var ref = refForName[name] else { return nil }
     guard let relRange = ref.range(of: NamespaceManager.Rel) else { return nil }
-    let arg = curie.substring(from: range.upperBound)
+    let arg = curie[range.upperBound...]
     ref.replaceSubrange(relRange, with: arg)
     return ref
   }

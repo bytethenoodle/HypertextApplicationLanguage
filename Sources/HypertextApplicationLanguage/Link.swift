@@ -64,7 +64,7 @@ public struct Link {
       // swiftlint:disable:next force_try
       static let expression = try! NSRegularExpression(pattern: "\\{.+\\}", options: [])
     }
-    let range = NSRange(location: 0, length: href.characters.count)
+    let range = NSRange(location: 0, length: href.count)
     return Templated.expression.numberOfMatches(in: href, options: [], range: range) > 0
   }
 
